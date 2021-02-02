@@ -14,7 +14,6 @@ export default function Trade() {
     description: '',
     amount: '',
   });
-  const [active, setActive] = useState(0);
   const [alert, setAlert] = useState(false);
   const [alertProps, setAlertProps] = useState({
     color: '',
@@ -50,9 +49,9 @@ export default function Trade() {
       .catch((err) => console.log(err));
     event.target.reset();
     formRef.current.value = '';
-    setActive(0);
+    
     console.log(res);
-    window.scrollTo(0, 0);
+    
     if (res == null) {
       setAlertProps((prevState) => {
         return {
