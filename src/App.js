@@ -1,6 +1,4 @@
 import React, { useState,useEffect} from 'react';
-
-import './style.css';
 import './styles/NavBar.css';
 import NavBar from './components/NavBar'
 import Transactions from './components/Transactions'
