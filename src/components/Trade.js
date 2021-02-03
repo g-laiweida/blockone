@@ -1,12 +1,15 @@
 import React, { useState, useRef } from 'react';
 import { Form, Label, Input, TextArea, Select } from '../styles/Form';
-import { Button } from '../styles/Button';
+import { Button } from '../styles/SubmitButton';
 import { Title } from '../styles/Title';
 import AlertModal from '../components/AlertModal';
-import '../styles/PageStyle.css'
+import{ Container } from '../styles/TransactionPage'
 
 export default function Trade() {
+  //to store temporary form data
   const formRef = useRef();
+
+  //array to store form data
   const [registerForm, setRegisterForm] = useState({
     date: `${new Date().toISOString().split('T')[0]}`,
     action: 'CREDIT',
@@ -14,6 +17,8 @@ export default function Trade() {
     description: '',
     amount: '',
   });
+
+  //array to get state of alert whether true or false
   const [alert, setAlert] = useState(false);
   const [alertProps, setAlertProps] = useState({
     color: '',
@@ -21,12 +26,14 @@ export default function Trade() {
   });
 
 
+  //this is to handle changes in the form fields
   const handleFieldChange = (field, event) => {
     let previousForm = { ...registerForm };
     previousForm[field] = event.target.value;
     setRegisterForm(previousForm);
   };
 
+  //this is to push form data to the api
   const handleSubmit = async (event) => {
     event.preventDefault();
     const res = await fetch(
@@ -49,9 +56,9 @@ export default function Trade() {
       .catch((err) => console.log(err));
     event.target.reset();
     formRef.current.value = '';
-    
+
     console.log(res);
-    
+
     if (res == null) {
       setAlertProps((prevState) => {
         return {
@@ -72,75 +79,76 @@ export default function Trade() {
     setAlert(true);
   };
 
+  //returns alert modal if data is successfully sent over and form is cleared
   return (
     <>
       {alert ? <AlertModal alertProps={alertProps} setAlert={setAlert} /> : ''}
-      <div className="container">
-          <Form id='transactionForm' onSubmit={(e) => handleSubmit(e)}>
-            <Title>Make a new transaction</Title>
-      
-             <Label>Select credit/debit</Label>
-            <Select
-              defaultValue={registerForm.action}
-              onChange={(e) => handleFieldChange('action', e)}
-              ref={formRef}
-              required
-            >
-              <option value='' disabled style={{ color: 'grey' }}>
-                Select credit/debit
+      <Container>
+        <Form id='transactionForm' onSubmit={(e) => handleSubmit(e)}>
+          <Title>Make a new transaction</Title>
+
+          <Label>Select credit/debit</Label>
+          <Select
+            defaultValue={registerForm.action}
+            onChange={(e) => handleFieldChange('action', e)}
+            ref={formRef}
+            required
+          >
+            <option value='' disabled style={{ color: 'grey' }}>
+              Select credit/debit
               </option>
-              <option value='CREDIT'>CREDIT</option>
-              <option value='DEBIT'>DEBIT</option>
-              
-            </Select>
-          
- 
-            <Label>Date</Label>
-            <Input
-              type='date'
-              id='date'
-              min={new Date().toISOString().split('T')[0]}
-              defaultValue={new Date().toISOString().split('T')[0]}
-              onChange={(e) => handleFieldChange('date', e)}
-              required
-            />
-            <Label>Currency</Label>
-            <Select
-              defaultValue={registerForm.currency}
-              onChange={(e) => handleFieldChange('currency', e)}
-              ref={formRef}
-              required
-            >
-              <option value='' disabled style={{ color: 'grey' }}>
-                Currency
+            <option value='CREDIT'>CREDIT</option>
+            <option value='DEBIT'>DEBIT</option>
+
+          </Select>
+
+
+          <Label>Date</Label>
+          <Input
+            type='date'
+            id='date'
+            min={new Date().toISOString().split('T')[0]}
+            defaultValue={new Date().toISOString().split('T')[0]}
+            onChange={(e) => handleFieldChange('date', e)}
+            required
+          />
+          <Label>Currency</Label>
+          <Select
+            defaultValue={registerForm.currency}
+            onChange={(e) => handleFieldChange('currency', e)}
+            ref={formRef}
+            required
+          >
+            <option value='' disabled style={{ color: 'grey' }}>
+              Currency
               </option>
-              <option value='HKD'>HKD</option>
-              <option value='SGD'>SGD</option>
-              <option value='USD'>USD</option>
-            </Select>
-            <Label>Amount</Label>
-            <Input
-              type='number'
-              className='amount'
-              id='amount'
-              placeholder='$'
-              min='0.00'
-              step='0.01'
-              onChange={(e) => handleFieldChange('amount', e)}
-              required
-            />
-            <Label>Description</Label>
-            <TextArea
-              type='text'
-              onChange={(e) => handleFieldChange('description', e)}
-              required
-            />
-            
-            <Button type='submit' className='submit-button' value='Submit'>
-              Submit
+            <option value='HKD'>HKD</option>
+            <option value='SGD'>SGD</option>
+            <option value='USD'>USD</option>
+          </Select>
+          <Label>Amount</Label>
+          <Input
+            type='number'
+            className='amount'
+            id='amount'
+            placeholder='$'
+            min='0.00'
+            step='0.01'
+            onChange={(e) => handleFieldChange('amount', e)}
+            required
+          />
+          <Label>Description</Label>
+          <TextArea
+            type='text'
+            onChange={(e) => handleFieldChange('description', e)}
+            required
+          />
+
+          <Button type='submit' className='submit-button' value='Submit'>
+            Submit
             </Button>
-          </Form>
-          </div>
+        </Form>
+        </Container>
     </>
   );
 }

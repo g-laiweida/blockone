@@ -1,19 +1,39 @@
-import React, { useState,useEffect} from 'react';
-
-
+import React, { useState, useEffect } from 'react';
 import '../styles/PageStyle.css'
 import styled from 'styled-components'
 import { TableStyle } from './TableStyle'
 import { Dropdown, DropdownContent } from '../styles/Dropdown';
+import { FilteringHeader, Container1, FilterButton, LeftHalf, LeftHalf1, TransactionHeader,ClearButton } from '../styles/TransactionPage';
 
 
 function Transactions() {
- 
-  const [status, setStatus] = useState("Show Earliest transactions first")
+
+  //arrays to store data from api
   const [results, setResults] = useState([]);
   const [results1, setResults1] = useState([]);
-  const [state, setState] = useState("Filter by: Show all");
- 
+
+  //arrays to store icons
+  const [icon, setIcon] = useState({
+    timestamp: String.fromCharCode('9661'),
+    action: String.fromCharCode('9661'),
+    description: String.fromCharCode('9661'),
+    amount: String.fromCharCode('9661'),
+    currency: String.fromCharCode('9661'),
+  });
+  const [icon1, setIcon1] = useState({
+    timestamp: String.fromCharCode('9661'),
+    action: String.fromCharCode('9661'),
+    description: String.fromCharCode('9661'),
+    amount: String.fromCharCode('9661'),
+    currency: String.fromCharCode('9661'),
+  });
+
+  //arrays to store filter states
+  const [state, setState] = useState("Show all");
+  const [action, setAction] = useState("");
+  const [currency, setCurrency] = useState("");
+
+  //sorts the selected column by both ways i.e. increasing or decreasing
   const [asc, setAsc] = useState({
     timestamp: true,
     action: true,
@@ -34,11 +54,17 @@ function Transactions() {
     });
 
     setResults(sortedData);
- 
     ascField[field] = !ascField[field];
     setAsc(ascField);
+    let temp = { ...icon1 };
+
+    temp[field] = String.fromCharCode('9660');
+    setIcon(temp);
+
   };
 
+
+  //fetch data from api
   useEffect(() => {
     const transactions = async () => {
       const data = await fetch(
@@ -51,11 +77,13 @@ function Transactions() {
       data.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
       setResults(data);
       setResults1(data);
-      
+
     };
     transactions();
   }, []);
 
+
+  //maps api to corresponding table columns
   const renderedResults = results.map((result) => {
     return (
       <tr className='transactionItem' key={result.id}>
@@ -71,119 +99,139 @@ function Transactions() {
             -{result.amount}
           </td>
         ) : (
-          <td
-            style={{
-              color: 'green',
-            }}
-          >
-            +{result.amount} 
-          </td>
-        )}
+            <td
+              style={{
+                color: 'green',
+              }}
+            >
+              +{result.amount}
+            </td>
+          )}
         <td>{result.currency}</td>
       </tr>
     );
   });
 
- var now = new Date().getMonth();
- var thisyear = new Date().getYear();
- 
- const duration = [
-    
-    {  label: 'Filter by: Current Month' },
-    {  label: 'Filter by: Past 3 Months' },
-    {  label: 'Filter by: Past 6 Months' },
-    {  label: 'Filter by: Debit Only' },
-    {  label: 'Filter by: Credit Only' },
-    {  label: 'Filter by: HKD Only' },
-    {  label: 'Filter by: SGD Only' },
-    {  label: 'Filter by: USD Only' },
-    {  label: 'Filter by: Show all' },
-    
- 
-  ];
- 
-  return(
-    <>
-    
-    <h1 className="title">My Transactions</h1>
-    <div className="container1">
-    <div className="left-half">
-    <TableStyle>
-    
-    <table>
-                <thead>
-                  <tr>
-                    <th onClick={() => onSort('timestamp')}>
-                      Timestamp &#9650;
-                    </th>
-                    <th onClick={() => onSort('action')}>
-                      Action &#9650;    
-                    </th>
-                    <th onClick={() => onSort('description')}>
-                      Description &#9650;
-                    </th>
-                    <th onClick={() => onSort('amount')}>
-                      Amount &#9650;
-                    </th>
-                    <th onClick={() => onSort('currency')}>
-                      Currency &#9650;
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>{renderedResults}</tbody>
-              </table>
-              </TableStyle>
-              </div>
-      
-        
-        
-    <div className="right-half"><h3>{state}</h3>
-        <Dropdown>
-        <button className='filterbtn'>Select Filter</button>
-        <DropdownContent>
-            <span id='currentMonth'  onClick={()=>{setState(duration[0].label);setResults(results1);setResults(results1.filter(result => new Date(result.timestamp).getMonth()-now===0))}}>
-             Current Month
-            </span>
-        
-            <span id='pastThreeMonth'  onClick={()=>{setState(duration[1].label);setResults(results1);setResults(results1.filter(result => new Date(result.timestamp).getYear()<thisyear ? new Date(result.timestamp).getMonth()-now>8 : now - new Date(result.timestamp.getMonth())<3))}}>
-            Past 3 Month
-            </span>
-            <span id='pastSixMonth'  onClick={()=>{setState(duration[2].label);setResults(results1);setResults(results1.filter(result => new Date(result.timestamp).getYear()<thisyear ? new Date(result.timestamp).getMonth()-now>6 : now - new Date(result.timestamp.getMonth())<6))}}>
-            Past 6 Month
-            </span>
-            <span id='debit'  onClick={()=>{setState(duration[3].label);setResults(results1);setResults(results1.filter(result => result.action==="DEBIT"))}}>
-            Debit only
-            </span>
-            <span id='credit'  onClick={()=>{setState(duration[4].label);setResults(results1);setResults(results1.filter(result => result.action==="CREDIT"))}}>
-            Credit only
-            </span>
-            <span id='hkd'  onClick={()=>{setState(duration[5].label);setResults(results1);setResults(results1.filter(result => result.currency==="HKD"))}}>
-            HKD
-            </span>
-            <span id='sgd'  onClick={()=>{setState(duration[6].label);setResults(results1);setResults(results1.filter(result => result.currency==="SGD"))}}>
-            SGD 
-            </span>
-            <span id='usd'  onClick={()=>{setState(duration[7].label);setResults(results1);setResults(results1.filter(result => result.currency==="USD"))}}>
-            USD
-            </span><span id='clear'  onClick={()=>{setState(duration[8].label);setResults(results1)}}>
-            Clear Filter
-            </span>
-      
-      </DropdownContent>
-        </Dropdown>
-    </div>
-    </div>
+  //variables to store today's month/year
+  var now = new Date().getMonth();
+  var thisyear = new Date().getYear();
 
-         </>     
-              
+  //array to store filter options
+  const duration = [
+
+    { label: 'Current Month' },
+    { label: 'Past 3 Months' },
+    { label: 'Past 6 Months' },
+    { label: 'Debit Only' },
+    { label: 'Credit Only' },
+    { label: 'HKD Only' },
+    { label: 'SGD Only' },
+    { label: 'USD Only' },
+    { label: 'Show all' },
+
+
+  ];
+
+
+  //returns page with table and filter buttons
+  return (
+    <>
+
+      <TransactionHeader> My Transactions </TransactionHeader>
+
+      <Container1>
+
+        <LeftHalf>
+          <h3>Select Filter</h3>
+          <LeftHalf1>
+
+            <Dropdown>
+              <FilterButton>Timeframe</FilterButton>
+              <DropdownContent>
+                <span id='currentMonth' onClick={() => { setAction(''); setCurrency(''); setState(duration[0].label); setResults(results1.filter(result => new Date(result.timestamp).getMonth() - now === 0)) }}>
+                  Current Month
+            </span>
+
+                <span id='pastThreeMonth' onClick={() => { setAction(''); setCurrency(''); setState(duration[1].label); setResults(results1.filter(result => new Date(result.timestamp).getYear() < thisyear ? new Date(result.timestamp).getMonth() - now > 8 : now - new Date(result.timestamp.getMonth()) < 3)) }}>
+                  Past 3 Month
+            </span>
+                <span id='pastSixMonth' onClick={() => { setAction(''); setCurrency(''); setState(duration[2].label); setResults(results1.filter(result => new Date(result.timestamp).getYear() < thisyear ? new Date(result.timestamp).getMonth() - now > 6 : now - new Date(result.timestamp.getMonth()) < 6)) }}>
+                  Past 6 Month
+            </span>
+              </DropdownContent>
+            </Dropdown>
+
+
+            <Dropdown>
+              <FilterButton>Credit/Debit</FilterButton>
+              <DropdownContent>
+                <span id='debit' onClick={() => { setState(''); setCurrency(''); setAction(duration[3].label); setResults(results1.filter(result => result.action === "DEBIT")) }}>
+                  Debit only
+            </span>
+                <span id='credit' onClick={() => { setState(''); setCurrency(''); setAction(duration[4].label); setResults(results1.filter(result => result.action === "CREDIT")) }}>
+                  Credit only
+            </span>
+              </DropdownContent>
+            </Dropdown>
+
+            <Dropdown>
+              <FilterButton>Currency</FilterButton>
+              <DropdownContent>
+                <span id='hkd' onClick={() => { setAction(''); setState(''); setCurrency(duration[5].label); setResults(results1.filter(result => result.currency === "HKD")) }}>
+                  HKD
+            </span>
+                <span id='sgd' onClick={() => { setAction(''); setState(''); setCurrency(duration[6].label); setResults(results1.filter(result => result.currency === "SGD")) }}>
+                  SGD
+            </span>
+                <span id='usd' onClick={() => { setAction(''); setState(''); setCurrency(duration[7].label); setResults(results1.filter(result => result.currency === "USD")) }}>
+                  USD
+            </span>
+              </DropdownContent>
+            </Dropdown>
+
+            <ClearButton onClick={() => { setAction(''); setCurrency(''); setState(duration[8].label); setResults(results1) }}>Clear Filter </ClearButton>
+          </LeftHalf1>
+
+
+          <FilteringHeader>Currently filtering by: {state} {action} {currency} </FilteringHeader>
+          <TableStyle>
+
+            <table>
+              <thead>
+                <tr>
+                  <th onClick={() => onSort('timestamp')}>
+                    Timestamp {icon.timestamp}
+                  </th>
+                  <th onClick={() => onSort('action')}>
+                    Action {icon.action}
+                  </th>
+                  <th onClick={() => onSort('description')}>
+                    Description {icon.description}
+                  </th>
+                  <th onClick={() => onSort('amount')}>
+                    Amount {icon.amount}
+                  </th>
+                  <th onClick={() => onSort('currency')}>
+                    Currency {icon.currency}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>{renderedResults}</tbody>
+            </table>
+          </TableStyle>
+        </LeftHalf>
+      </Container1>
+
+    </>
+
   )
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
 
 
 }

@@ -1,3 +1,5 @@
+ /* styling for transactions page */
+ 
  .btn{
     padding-bottom: 10px;
     justify-content: center;
@@ -12,38 +14,41 @@
     height: auto;
     position: relative;
     width: 100%;
-    margin-left: 40px;
   }
 
   .filterbtn{
-      width:50%;
-      
+      width:100%;
+      padding-bottom: 3px;
       color: black;
       background-color: lightgrey;
-      border-radius: 6px;
       font-size: 17px;
-      
+      border:2px solid;
       
   }
+
+  .clearbtn{
+    width:10%;
+    padding-bottom: 3px;
+    color: black;
+    background-color: lightgrey;
+    font-size: 17px;
+    border:2px solid;
+    
+}
+
+  .clearbtn:hover{
+    opacity: 0.3;
+  }
+
   .title{
       margin-left:50px;
   }
 
-  .viewbtn{
-    width:100%;
-    padding: 5px;
-    color: black;
-    background-color: lightgrey;
-    border-radius: 6px;
-    font-size: 17px;
-    margin-top: 5px;
-    
-}
 .left-half {
     background-color: white;
     position: absolute;
     left: 50px;
-    width: 50%;
+    width: 60%;
   }
   
   .right-half {
@@ -51,10 +56,38 @@
     position: absolute;
     right: 0px;
     width: 50%;
+    
+  }
+  .left-half1 {
+    background-color: white;
+    position: absolute;
+    display:flex;
+    flex-direction: row;
+    margin-bottom: 100px;
+    width: 100%;
+  }
+  
+  .right-half1 {
+    background-color: white;
+    position: absolute;
+    right: 0px;
+    width: 50%;
+    
   }
   .container1 {
     display: table;
     width: 100%;
+  }
+
+  .filterContainer{
+    height: auto;
+    position: relative;
+    width: 100%;
+    margin-top: 100px;
     
+  }
+
+  .filtertitle{
+    margin-top: 130px;
   }
   
